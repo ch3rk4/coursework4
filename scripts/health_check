@@ -1,0 +1,37 @@
+# scripts/health_check.sh
+#!/bin/bash
+
+# Проверка здоровья приложения
+
+echo "🔍 Проверка состояния сервисов..."
+
+# Проверка контейнеров
+docker-compose -f docker-compose.prod.yml ps
+
+# Проверка доступности API
+API_URL="http://localhost:8000/api/"
+if curl -f -s $API_URL > /dev/null; then
+    echo "✅ API доступен"
+else
+    echo "❌ API недоступен"
+fi
+
+# Проверка базы данных
+DB_CHECK=$(docker-compose -f docker-compose.prod.yml exec -T db psql -U habits_user -d habits_db -c "SELECT 1;" 2>/dev/null)
+if [[ $? -eq 0 ]]; then
+    echo "✅ База данных работает"
+else
+    echo "❌ Проблемы с базой данных"
+fi
+
+# Проверка Redis
+REDIS_CHECK=$(docker-compose -f docker-compose.prod.yml exec -T redis redis-cli ping 2>/dev/null)
+if [[ "$REDIS_CHECK" == "PONG" ]]; then
+    echo "✅ Redis работает"
+else
+    echo "❌ Проблемы с Redis"
+fi
+
+# Логи последних ошибок
+echo "📋 Последние ошибки в логах:"
+docker-compose -f docker-compose.prod.yml logs --tail=10 web | grep -i error || echo "Ошибок не найдено"

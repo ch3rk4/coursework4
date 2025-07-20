@@ -67,3 +67,26 @@ LOGGING = {
         },
     },
 }
+
+# Дополнительные настройки для Yandex Cloud
+import os
+from .settings import *
+
+# Security for production
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+
+# SSL settings (если используете HTTPS)
+if os.getenv('USE_HTTPS', 'False').lower() == 'true':
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Database connection pooling
+DATABASES['default']['CONN_MAX_AGE'] = 60
+
+# Celery Beat Database Scheduler
+INSTALLED_APPS += ['django_celery_beat']
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
