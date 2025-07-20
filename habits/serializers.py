@@ -12,7 +12,6 @@ class HabitSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """Дополнительная валидация."""
-        # Проверка одновременного заполнения связанной привычки и вознаграждения
         if data.get('related_habit') and data.get('reward'):
             raise serializers.ValidationError(
                 'Нельзя указывать одновременно связанную привычку и вознаграждение.'
