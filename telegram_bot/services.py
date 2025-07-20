@@ -1,7 +1,9 @@
 import logging
+
+from django.conf import settings
 from telegram import Bot
 from telegram.error import TelegramError
-from django.conf import settings
+
 from .models import TelegramUser
 
 logger = logging.getLogger(__name__)

@@ -1,18 +1,19 @@
-import pytest
 import os
+
 import django
+import pytest
 from django.conf import settings
 from django.test.utils import get_runner
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings'
+os.environ["DJANGO_SETTINGS_MODULE"] = "config.settings"
 
 
 def pytest_configure():
     settings.DEBUG = False
     # Настройка базы данных для тестов
-    settings.DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:'
+    settings.DATABASES["default"] = {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": ":memory:",
     }
 
     django.setup()
@@ -21,7 +22,7 @@ def pytest_configure():
     test_runner.setup_test_environment()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def django_db_setup():
     """Настройка базы данных для тестов."""
     pass
@@ -31,6 +32,7 @@ def django_db_setup():
 def api_client():
     """Фикстура для API клиента."""
     from rest_framework.test import APIClient
+
     return APIClient()
 
 
@@ -38,11 +40,10 @@ def api_client():
 def user():
     """Фикстура для пользователя."""
     from django.contrib.auth import get_user_model
+
     User = get_user_model()
     return User.objects.create_user(
-        username='testuser',
-        email='test@example.com',
-        password='testpass123'
+        username="testuser", email="test@example.com", password="testpass123"
     )
 
 

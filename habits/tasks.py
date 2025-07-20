@@ -1,8 +1,11 @@
+from datetime import timedelta
+
 from celery import shared_task
 from django.utils import timezone
-from datetime import datetime, timedelta
-from .models import Habit
+
 from telegram_bot.services import TelegramService
+
+from .models import Habit
 
 
 @shared_task
@@ -15,7 +18,7 @@ def send_habit_reminders():
     habits = Habit.objects.filter(
         time__hour=current_time.hour,
         time__minute=current_time.minute,
-        user__telegram_user__is_active=True
+        user__telegram_user__is_active=True,
     )
 
     telegram_service = TelegramService()

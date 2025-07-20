@@ -1,10 +1,12 @@
 """Telegram бот для напоминаний."""
 
 import logging
-from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from telegram import Update
+from telegram.ext import Application, CommandHandler, ContextTypes
+
 from .models import TelegramUser
 
 logger = logging.getLogger(__name__)
@@ -43,8 +45,7 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     try:
         telegram_user = TelegramUser.objects.get(
-            telegram_chat_id=chat_id,
-            is_active=True
+            telegram_chat_id=chat_id, is_active=True
         )
         await update.message.reply_text(
             f"✅ Аккаунт подключен к пользователю: {telegram_user.user.username}"
@@ -66,12 +67,12 @@ def setup_bot():
     return application
 
 
-if __name__ == '__main__':
-    import asyncio
-    import django
+if __name__ == "__main__":
     import os
 
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+    import django
+
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
     django.setup()
 
     app = setup_bot()

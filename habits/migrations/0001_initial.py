@@ -15,25 +15,82 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Habit',
+            name="Habit",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('place', models.CharField(max_length=255, verbose_name='Место')),
-                ('time', models.TimeField(verbose_name='Время')),
-                ('action', models.CharField(max_length=255, verbose_name='Действие')),
-                ('is_pleasant', models.BooleanField(default=False, verbose_name='Признак приятной привычки')),
-                ('periodicity', models.PositiveIntegerField(default=1, verbose_name='Периодичность (в днях)')),
-                ('reward', models.CharField(blank=True, max_length=255, null=True, verbose_name='Вознаграждение')),
-                ('execution_time', models.PositiveIntegerField(verbose_name='Время на выполнение (секунды)')),
-                ('is_public', models.BooleanField(default=False, verbose_name='Признак публичности')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')),
-                ('related_habit', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='habits.habit', verbose_name='Связанная привычка')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Пользователь')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("place", models.CharField(max_length=255, verbose_name="Место")),
+                ("time", models.TimeField(verbose_name="Время")),
+                ("action", models.CharField(max_length=255, verbose_name="Действие")),
+                (
+                    "is_pleasant",
+                    models.BooleanField(
+                        default=False, verbose_name="Признак приятной привычки"
+                    ),
+                ),
+                (
+                    "periodicity",
+                    models.PositiveIntegerField(
+                        default=1, verbose_name="Периодичность (в днях)"
+                    ),
+                ),
+                (
+                    "reward",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Вознаграждение",
+                    ),
+                ),
+                (
+                    "execution_time",
+                    models.PositiveIntegerField(
+                        verbose_name="Время на выполнение (секунды)"
+                    ),
+                ),
+                (
+                    "is_public",
+                    models.BooleanField(
+                        default=False, verbose_name="Признак публичности"
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Дата создания"
+                    ),
+                ),
+                (
+                    "related_habit",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="habits.habit",
+                        verbose_name="Связанная привычка",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Пользователь",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Привычка',
-                'verbose_name_plural': 'Привычки',
-                'ordering': ['-created_at'],
+                "verbose_name": "Привычка",
+                "verbose_name_plural": "Привычки",
+                "ordering": ["-created_at"],
             },
         ),
     ]
