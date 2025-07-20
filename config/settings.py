@@ -70,11 +70,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'habits_db',
-        'USER': 'habits_user',
-        'PASSWORD': 'habits_password',
+        'NAME': os.getenv('POSTGRES_DB', 'habits_db'),
+        'USER': os.getenv('POSTGRES_USER', 'habits_user'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'habits123'),
         'HOST': os.getenv('DB_HOST', 'localhost'),
         'PORT': os.getenv('DB_PORT', '5432'),
+        'OPTIONS': {
+            'client_encoding': 'UTF8',
+        },
     }
 }
 
