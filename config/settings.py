@@ -163,3 +163,14 @@ DJOSER = {
 
 from .celery_beat import CELERY_BEAT_SCHEDULE
 CELERY_BEAT_SCHEDULE = CELERY_BEAT_SCHEDULE
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': os.getenv('REDIS_URL', 'redis://localhost:6379/1'),
+    }
+}
+
+# Настройки сессий (добавить в settings.py)
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
