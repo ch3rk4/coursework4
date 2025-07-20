@@ -13,6 +13,7 @@ djoser = "^2.3.3"
 django-perms = "^2.1.0"
 django-filter = "^25.1"
 celery = "^5.5.3"
+pytest = "^8.4.1"
 
 
 [build-system]
