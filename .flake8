@@ -1,0 +1,11 @@
+[flake8]
+exclude =
+    migrations,
+    venv,
+    __pycache__,
+    .git,
+    .pytest_cache,
+    htmlcov
+max-line-length = 120
+max-complexity = 10
+ignore = E203, W503

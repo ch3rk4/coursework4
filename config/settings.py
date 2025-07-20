@@ -70,11 +70,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'habits_db',
-        'USER': 'habits_user',
-        'PASSWORD': 'habits_password',
+        'NAME': os.getenv('POSTGRES_DB', 'habits_db'),
+        'USER': os.getenv('POSTGRES_USER', 'habits_user'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'habits123'),
         'HOST': os.getenv('DB_HOST', 'localhost'),
         'PORT': os.getenv('DB_PORT', '5432'),
+        'OPTIONS': {
+            'client_encoding': 'UTF8',
+        },
     }
 }
 
@@ -160,3 +163,17 @@ DJOSER = {
         'user_list': ['rest_framework.permissions.AllowAny'],
     },
 }
+
+from .celery_beat import CELERY_BEAT_SCHEDULE
+CELERY_BEAT_SCHEDULE = CELERY_BEAT_SCHEDULE
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': os.getenv('REDIS_URL', 'redis://localhost:6379/1'),
+    }
+}
+
+# Настройки сессий (добавить в settings.py)
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
