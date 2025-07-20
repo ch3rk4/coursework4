@@ -1,10 +1,9 @@
-from rest_framework import generics, permissions
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics, permissions
+
 from .models import Habit
-from .serializers import HabitSerializer, PublicHabitSerializer
 from .permissions import IsOwnerOrReadOnly
+from .serializers import HabitSerializer, PublicHabitSerializer
 
 
 class HabitListCreateView(generics.ListCreateAPIView):
@@ -13,7 +12,7 @@ class HabitListCreateView(generics.ListCreateAPIView):
     serializer_class = HabitSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['is_pleasant', 'is_public']
+    filterset_fields = ["is_pleasant", "is_public"]
 
     def get_queryset(self):
         return Habit.objects.filter(user=self.request.user)

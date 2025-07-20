@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  PYTHON_VERSION: '3.11'
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -36,12 +39,14 @@ jobs:
           - 6379:6379
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
 
     - name: Install dependencies
       run: |
@@ -50,19 +55,21 @@ jobs:
 
     - name: Create .env file
       run: |
-        echo "SECRET_KEY=test-secret-key" >> .env
+        echo "SECRET_KEY=test-secret-key-for-ci" >> .env
         echo "DEBUG=True" >> .env
-        echo "DATABASE_URL=postgresql://habits_user:habits_password@localhost:5432/test_habits_db" >> .env
+        echo "POSTGRES_DB=test_habits_db" >> .env
+        echo "POSTGRES_USER=habits_user" >> .env
+        echo "POSTGRES_PASSWORD=habits_password" >> .env
+        echo "DB_HOST=localhost" >> .env
         echo "REDIS_URL=redis://localhost:6379/0" >> .env
         echo "TELEGRAM_BOT_TOKEN=test-token" >> .env
+        echo "ALLOWED_HOSTS=localhost,127.0.0.1" >> .env
 
     - name: Run migrations
-      run: |
-        python manage.py migrate
+      run: python manage.py migrate
 
     - name: Run flake8
-      run: |
-        flake8 .
+      run: flake8 .
 
     - name: Run tests with coverage
       run: |
@@ -74,37 +81,73 @@ jobs:
       uses: codecov/codecov-action@v3
       with:
         file: ./coverage.xml
+        fail_ci_if_error: true
 
   build:
     runs-on: ubuntu-latest
     needs: test
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v4
 
     - name: Build Docker image
+      run: docker build -t habits-tracker .
+
+    - name: Test Docker image
       run: |
-        docker build -t habits-tracker .
+        docker run --rm habits-tracker python manage.py check
 
   deploy:
     runs-on: ubuntu-latest
     needs: [test, build]
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v4
 
     - name: Deploy to server
-      uses: appleboy/ssh-action@v0.1.5
+      uses: appleboy/ssh-action@v0.1.7
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         script: |
           cd /opt/habits_tracker
+          
+          # Обновление кода
           git pull origin main
-          docker-compose down
-          docker-compose build
-          docker-compose up -d
-          docker-compose exec -T web python manage.py migrate
-          docker-compose exec -T web python manage.py collectstatic --noinput
+          
+          # Создание .env файла на сервере
+          cat > .env << EOF
+          SECRET_KEY=${{ secrets.SECRET_KEY }}
+          DEBUG=False
+          POSTGRES_DB=habits_db
+          POSTGRES_USER=habits_user
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          DB_HOST=db
+          REDIS_URL=redis://redis:6379/0
+          TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
+          ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
+          CORS_ALLOWED_ORIGINS=${{ secrets.CORS_ALLOWED_ORIGINS }}
+          EOF
+          
+          # Остановка старых контейнеров
+          docker-compose -f docker-compose.prod.yml down
+          
+          # Сборка и запуск новых контейнеров
+          docker-compose -f docker-compose.prod.yml build
+          docker-compose -f docker-compose.prod.yml up -d
+          
+          # Применение миграций
+          docker-compose -f docker-compose.prod.yml exec -T web python manage.py migrate
+          
+          # Сбор статических файлов
+          docker-compose -f docker-compose.prod.yml exec -T web python manage.py collectstatic --noinput
+          
+          # Проверка статуса
+          docker-compose -f docker-compose.prod.yml ps
+          
+          # Очистка неиспользуемых образов
+          docker image prune -f
