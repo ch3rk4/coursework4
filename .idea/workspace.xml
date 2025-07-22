@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8fcc0a3d-4dc6-409c-a711-ec5c3ac839a2" name="Changes" comment="use black and isort" />
+    <list default="true" id="8fcc0a3d-4dc6-409c-a711-ec5c3ac839a2" name="Changes" comment="create README.md">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -239,7 +242,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753048391019</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="create README.md">
+      <option name="closed" value="true" />
+      <created>1753048591354</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1753048591355</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -261,6 +272,7 @@
     <MESSAGE value="create tests" />
     <MESSAGE value="fixes" />
     <MESSAGE value="use black and isort" />
-    <option name="LAST_COMMIT_MESSAGE" value="use black and isort" />
+    <MESSAGE value="create README.md" />
+    <option name="LAST_COMMIT_MESSAGE" value="create README.md" />
   </component>
 </project>
