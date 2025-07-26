@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8fcc0a3d-4dc6-409c-a711-ec5c3ac839a2" name="Changes" comment="create README.md">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-    </list>
+    <list default="true" id="8fcc0a3d-4dc6-409c-a711-ec5c3ac839a2" name="Changes" comment="fixes" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -24,7 +21,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="day_2" />
+        <entry key="$PROJECT_DIR$" value="day_4" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -55,7 +52,7 @@
   "keyToString": {
     "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "day__3"
+    "git-widget-placeholder": "day__5"
   }
 }]]></component>
   <component name="SharedIndexes">
@@ -250,7 +247,23 @@
       <option name="project" value="LOCAL" />
       <updated>1753048591355</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="create README.md and fixes">
+      <option name="closed" value="true" />
+      <created>1753049897952</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1753049897953</updated>
+    </task>
+    <task id="LOCAL-00024" summary="fixes">
+      <option name="closed" value="true" />
+      <created>1753259607424</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1753259607424</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -270,9 +283,10 @@
     <MESSAGE value="create admin from habits" />
     <MESSAGE value="create important files" />
     <MESSAGE value="create tests" />
-    <MESSAGE value="fixes" />
     <MESSAGE value="use black and isort" />
     <MESSAGE value="create README.md" />
-    <option name="LAST_COMMIT_MESSAGE" value="create README.md" />
+    <MESSAGE value="create README.md and fixes" />
+    <MESSAGE value="fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixes" />
   </component>
 </project>

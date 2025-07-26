@@ -1,14 +1,25 @@
 """Настройки для продакшена."""
 
-from .settings import *
+import os
 
+from .settings import *  # noqa: F403,F401
+
+# Переопределяем настройки для продакшена
 DEBUG = False
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
-# ALLOWED_HOSTS = ["localhost", "127.0.0.1", "51.250.33.223"]
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "https://your-domain.com"]
+# Хосты из переменных окружения
+ALLOWED_HOSTS = (
+    os.getenv("ALLOWED_HOSTS", "").split(",") if os.getenv("ALLOWED_HOSTS") else []
+)
 
-# Database для продакшена
+# CORS настройки для продакшена
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+    if origin.strip()
+]
+
+# База данных для продакшена
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -17,22 +28,37 @@ DATABASES = {
         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
         "HOST": os.getenv("DB_HOST", "db"),
         "PORT": os.getenv("DB_PORT", "5432"),
+        "CONN_MAX_AGE": 60,  # Connection pooling
+        "OPTIONS": {
+            "client_encoding": "UTF8",
+        },
     }
 }
 
-# Безопасность
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# Настройки безопасности
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = "DENY"
 
-# Логирование
+# SSL настройки (если используется HTTPS)
+USE_HTTPS = os.getenv("USE_HTTPS", "False").lower() == "true"
+if USE_HTTPS:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Логирование для продакшена
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
         "verbose": {
-            "format": "{levelname} {asctime} {module} {message}",
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
             "style": "{",
         },
     },
@@ -46,47 +72,52 @@ LOGGING = {
         "console": {
             "level": "INFO",
             "class": "logging.StreamHandler",
-            "formatter": "verbose",
+            "formatter": "simple",
         },
+    },
+    "root": {
+        "handlers": ["console", "file"],
+        "level": "INFO",
     },
     "loggers": {
         "django": {
             "handlers": ["file", "console"],
             "level": "INFO",
-            "propagate": True,
+            "propagate": False,
         },
         "habits": {
             "handlers": ["file", "console"],
             "level": "INFO",
-            "propagate": True,
+            "propagate": False,
         },
         "telegram_bot": {
             "handlers": ["file", "console"],
             "level": "INFO",
-            "propagate": True,
+            "propagate": False,
         },
     },
 }
 
-# Дополнительные настройки для Yandex Cloud
-import os
-from .settings import *
+# Celery Beat с базой данных для продакшена
+INSTALLED_APPS += ["django_celery_beat"]  # noqa: F405
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
-# Security for production
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = 'DENY'
+# Кэширование для продакшена
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": os.getenv("REDIS_URL", "redis://redis:6379/1"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}
 
-# SSL settings (если используете HTTPS)
-if os.getenv('USE_HTTPS', 'False').lower() == 'true':
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# Статические файлы для продакшена
+STATIC_ROOT = "/app/static_collected"
+MEDIA_ROOT = "/app/media"
 
-# Database connection pooling
-DATABASES['default']['CONN_MAX_AGE'] = 60
-
-# Celery Beat Database Scheduler
-INSTALLED_APPS += ['django_celery_beat']
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+# Оптимизация сессий
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+SESSION_COOKIE_AGE = 86400  # 24 часа
